@@ -1,5 +1,5 @@
-from simulator import Simulator
+from simulador import Simulador
 
 if __name__ == "__main__":
-    simulador = Simulator()
+    simulador = Simulador()
     simulador.simular()
