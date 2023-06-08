@@ -32,6 +32,7 @@ class Simulador:
         self.generar_plantas()
         self.generar_celdas()
         while self.t < params.HORA_TERMINO:
+
             self.main_loop()
 
     def main_loop(self):
