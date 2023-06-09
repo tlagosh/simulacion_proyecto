@@ -18,10 +18,13 @@ class Planta:
             self.set_distribucion_normal()
         elif distribucion_demanda == "Triangular":
             self.set_distribucion_triangular()
-        self.inventario = 2 * self.distribucion_demanda.mean()
+        self.inventario = 0
         self.demanda_diaria = 0
+        # Si es mayor a 0 sumar uno a data.dias_demanda_insatisfecha
+        self.demanda_pendiente = 0
         self.camiones = []
         self.data = Data()
+        self.set_inventario_inicial()
 
     def set_distribucion_normal(self):
         self.distribucion_demanda = np.random.normal(
@@ -36,10 +39,24 @@ class Planta:
             self.distribucion_demanda, size=1)
 
     def quiebre_de_stock(self):
-        return self.inventario < 2 * self.demanda_diaria
+        return self.inventario < 2 * self.distribucion_demanda.mean()
 
     def subir_inventario(self, cantidad):
         self.inventario += cantidad
 
     def demanda_satisfecha(self):
         return self.inventario >= self.demanda_diaria
+
+    def recibir_camion(self, camion):
+        self.camiones.append(camion)
+
+    def set_inventario_inicial(self):
+        self.inventario = 2 * self.distribucion_demanda.mean()
+
+    def hacer_pedido(self):
+        # Todos los dias se pide lo que falta para llegar a 3*promedio_demanda_diaria
+        # Si hay demanda pendiente, se pide toda la demanda pendiente + 3*promedio_demanda_diaria
+        pass
+
+    def satisfacer_demanda(self):
+        self.inventario - self.demanda_diaria

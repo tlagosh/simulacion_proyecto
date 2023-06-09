@@ -5,6 +5,7 @@ class Data:
     def __init__(self):
         self.costos = {}
         self.set_costos()
+        self.dias_demanda_insastisfecha = 0
 
     def set_costos(self):
         for dia in range(0, params.DIAS_SIMULACION):
