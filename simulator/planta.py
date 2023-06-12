@@ -54,6 +54,7 @@ class Planta:
         self.inventario = 2 * self.distribucion_demanda.mean()
 
     def hacer_pedido(self):
+
         # Todos los dias se pide lo que falta para llegar a 3*promedio_demanda_diaria
         # Si hay demanda pendiente, se pide toda la demanda pendiente + 3*promedio_demanda_diaria
         pass
