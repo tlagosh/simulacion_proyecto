@@ -16,6 +16,7 @@ class Celda:
         return f"Celda: ({self.x}, {self.y})"
 
     def iniciar_camiones(self):
+        self.camiones = []
         cantidad_camiones = random.randint(CAMIONES_MIN, CAMIONES_MAX)
         for i in range(cantidad_camiones):
             self.camiones.append(Camion(i, self.x, self.y))
@@ -23,3 +24,16 @@ class Celda:
     def enviar_camion(self):
         camion = self.camiones.pop()
         return camion
+    
+    def madera_disponible(self):
+        
+        cantidad_madera = 0
+        for camion in self.camiones:
+            cantidad_madera += camion.capacidad
+        
+        return cantidad_madera
+    
+    def enviar_camiones(self, planta):
+        return self.camiones
+
+

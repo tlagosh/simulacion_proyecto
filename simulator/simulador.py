@@ -14,7 +14,11 @@ class Simulador:
     def simular(self):
         self.generar_plantas()
         self.generar_celdas()
-        self.set_destino_camiones()
+        
+        # Dado la política de restock actual, tenemos que asignar las celdas a plantas
+        # Lo anterior se hace con la siguiente función
+        self.asignar_celdas_a_plantas()
+
         while self.dia < params.DIAS_SIMULACION:
             self.main_loop()
 
@@ -40,38 +44,88 @@ class Simulador:
                 if celda:
                     self.celdas.append(Celda(x, y))
 
-    def set_destino_camiones(self):
-        for celda in self.celdas:
-            for camion in celda.camiones:
-                posibles_plantas = list(
-                    filter(lambda planta: not planta.demanda_satisfecha(), self.plantas))
-                camion.set_destino(posibles_plantas)
+    def asignar_celdas_a_plantas(self):
+        # Cada planta, por turnos, va a elegir la celda más cercana a ella
+        # y se la va a asignar
+        celdas_disponibles = self.celdas.copy()
+        while len(celdas_disponibles) > 0:
+            for planta in self.plantas:
+                if len(celdas_disponibles) > 0:
+                    celda_mas_cercana = self.get_celda_mas_cercana(
+                        celdas_disponibles, planta)
+                    planta.celdas.append((celda_mas_cercana.x, celda_mas_cercana.y))
+                    celdas_disponibles.remove(celda_mas_cercana)
+                else:
+                    break
+
+    def get_celda_mas_cercana(self, celdas, planta):
+        celda_mas_cercana = celdas[0]
+        for celda in celdas:
+            if self.get_distance(planta, celda) < self.get_distance(planta, celda_mas_cercana):
+                celda_mas_cercana = celda
+        return celda_mas_cercana
+    
+    def get_distance(self, planta, celda):
+        return abs(planta.x - celda.x) + abs(planta.y - celda.y)
 
     def main_loop(self):
+
         self.iniciar_dia()
+
+        # politica de restock
+        if not self.hay_lluvia():
+            self.enviar_camiones()
+
         self.finalizar_dia()
 
     def hay_lluvia(self):
         return random.random() < params.PROBABILIDAD_LLUVIA
 
     def iniciar_dia(self):
+
         for planta in self.plantas:
-            planta.set_demanda_diaria()
+            # Se inicia por revisar si hay quiebre de stock
             if planta.quiebre_de_stock():
                 self.planta.data.costos[self.dia]["costo_quiebre_stock"] += params.COSTO_QUIEBRE_STOCK
-            # RESTAR DEMANDA DE INVENTARIO
-            # Si el inventario no alcanza para la demanda de hoy, quedo con demanda pendiente para el dia siguiente
-            if not self.hay_lluvia():
-                # Pedir camiones
-                pass
-            # self.enviar_camiones(planta)
+            
+            # Se setea la demanda diaria
+            planta.demanda_diara = planta.distribucion_demanda.sample()
 
-    def enviar_camiones(self, planta):
-        while planta.quiebre_de_stock():
-            nearest_celda = self.get_nearest_celda(planta)
-            camion_a_enviar = nearest_celda.enviar_camion(planta)
-            if camion_a_enviar.planta_destino == (planta.x, planta.y):
-                planta.recibir_camion(camion_a_enviar)
+            # Se resta la demanda del inventario
+            planta.inventario -= planta.demanda_diaria
+
+            # Si el inventario no alcanza para la demanda de hoy, quedo con demanda pendiente para el dia siguiente
+            if planta.inventario < 0:
+                planta.demanda_pendiente = abs(planta.inventario)
+                planta.inventario = 0
+        
+        for celda in self.celdas:
+            celda.iniciar_camiones()
+
+    def enviar_camiones(self):
+        
+        for planta in self.plantas:
+
+            pedido = planta.hacer_pedido()
+            
+            if pedido > 0:
+                for coordenadas_celda in planta.celdas:
+                    # Enviar camiones de esa celda a la planta
+                    if pedido > 0:
+
+                        celda = self.get_celda(coordenadas_celda)
+                        if celda.camiones[0].puedo_llegar():
+                            pedido -= celda.madera_disponible(planta)
+                            camiones = celda.enviar_camiones(planta)
+                            planta.recibir_camiones(camiones)
+                    else:
+                        break
+
+
+    def get_celda(self, coordenadas_celda):
+        for celda in self.celdas:
+            if celda.x == coordenadas_celda[0] and celda.y == coordenadas_celda[1]:
+                return celda
 
     def get_nearest_celda(self, planta):
         nearest_celda = self.celdas[0]
@@ -80,8 +134,7 @@ class Simulador:
                 nearest_celda = celda
         return nearest_celda
 
-    def get_distance(self, planta, celda):
-        return abs(planta.x - celda.x) + abs(planta.y - celda.y)
-
     def finalizar_dia(self):
         self.dia += 1
+        for planta in self.plantas:
+            pass

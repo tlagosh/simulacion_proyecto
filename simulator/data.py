@@ -6,6 +6,8 @@ class Data:
         self.costos = {}
         self.set_costos()
         self.dias_demanda_insastisfecha = 0
+        self.recorridos = {}
+        self.set_recorridos()
 
     def set_costos(self):
         for dia in range(0, params.DIAS_SIMULACION):
@@ -13,6 +15,11 @@ class Data:
             self.costos[dia]["costo_transporte"] = 0
             self.costos[dia]["costo_inventario"] = 0
             self.costos[dia]["costo_quiebre_stock"] = 0
+
+    def set_recorridos(self):
+        for dia in range(0, params.DIAS_SIMULACION):
+            self.recorridos[dia] = {}
+            self.recorridos[dia]["recorridos"] = []
 
     def costo_total_transporte(self):
         return sum([value["costo_transporte"] for value in self.costos.values()])

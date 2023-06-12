@@ -23,6 +23,9 @@ class Planta:
         # Si es mayor a 0 sumar uno a data.dias_demanda_insatisfecha
         self.demanda_pendiente = 0
         self.camiones = []
+        # Por política actual de reposición:
+        self.celdas = []
+        self.punto_quiebre_de_stock = 2 * self.distribucion_demanda.mean()
         self.data = Data()
         self.set_inventario_inicial()
 
@@ -39,7 +42,7 @@ class Planta:
             self.distribucion_demanda, size=1)
 
     def quiebre_de_stock(self):
-        return self.inventario < 2 * self.distribucion_demanda.mean()
+        return self.inventario < self.punto_quiebre_de_stock
 
     def subir_inventario(self, cantidad):
         self.inventario += cantidad
@@ -49,6 +52,9 @@ class Planta:
 
     def recibir_camion(self, camion):
         self.camiones.append(camion)
+    
+    def recibir_camiones(self, camiones):
+        self.camiones = camiones
 
     def set_inventario_inicial(self):
         self.inventario = 2 * self.distribucion_demanda.mean()
@@ -56,7 +62,15 @@ class Planta:
     def hacer_pedido(self):
         # Todos los dias se pide lo que falta para llegar a 3*promedio_demanda_diaria
         # Si hay demanda pendiente, se pide toda la demanda pendiente + 3*promedio_demanda_diaria
-        pass
+        
+        pedido = 0
+        if self.demanda_pendiente > 0:
+            pedido = self.demanda_pendiente + 3 * self.distribucion_demanda.mean()
+        else:
+            if self.inventario < 3 * self.distribucion_demanda.mean():
+                pedido = 3 * self.distribucion_demanda.mean() - self.inventario
+
+        return pedido
 
     def satisfacer_demanda(self):
         self.inventario - self.demanda_diaria
