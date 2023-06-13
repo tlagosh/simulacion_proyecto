@@ -22,6 +22,8 @@ class Simulador:
         while self.dia < params.DIAS_SIMULACION:
             self.main_loop()
 
+        return self.plantas
+
     def generar_plantas(self):
         for planta in params.PLANTAS:
             if planta[2] == "Normal":
@@ -124,7 +126,6 @@ class Simulador:
                         if celda.quedan_camiones() and celda.camiones[0].puedo_llegar(planta):
                             pedido -= celda.madera_disponible()
                             camiones = celda.enviar_camiones(planta)
-
                             planta.recibir_camiones(camiones)
 
                     else:

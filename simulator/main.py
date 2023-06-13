@@ -1,5 +1,7 @@
 from simulador import Simulador
 
+
 if __name__ == "__main__":
     simulador = Simulador()
-    simulador.simular()
+    plantas = simulador.simular()
+    # TODO hacer algo con las plantas

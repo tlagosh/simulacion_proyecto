@@ -49,6 +49,7 @@ class Planta:
 
     def recibir_camiones(self, camiones):
         self.camiones += camiones
+        self.inventario += sum([camion.capacidad for camion in camiones])
 
     def set_inventario_inicial(self):
         self.inventario = 2 * self.distribucion_demanda.mean()
