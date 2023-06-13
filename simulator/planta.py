@@ -75,10 +75,7 @@ class Planta:
 
     def finalizar_dia(self, dia):
         for camion in self.camiones:
-            recorrido = []
-            recorrido.append(camion.celda_inicio)
-            recorrido.append((self.x, self.y))
-            self.data.recorridos[dia].append(recorrido)
+            self.data.recorridos[dia].append(camion.celda_inicio)
             self.data.costos[dia]["costo_transporte"] += self.costo_distancia_recorrida(
                 camion)
         self.data.costos[dia]["costo_inventario"] += self.inventario * \

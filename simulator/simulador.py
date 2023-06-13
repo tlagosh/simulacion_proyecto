@@ -3,6 +3,7 @@ from celda import Celda
 from planta import Planta
 import params
 import random
+from tqdm import tqdm
 
 
 class Simulador:
@@ -18,9 +19,14 @@ class Simulador:
         # Dado la política de restock actual, tenemos que asignar las celdas a plantas
         # Lo anterior se hace con la siguiente función
         self.asignar_celdas_a_plantas()
+        
+        progress_bar = tqdm(total=params.DIAS_SIMULACION)
 
         while self.dia < params.DIAS_SIMULACION:
             self.main_loop()
+            progress_bar.update(1)
+        
+        progress_bar.close()
 
         return self.plantas
 
@@ -45,7 +51,7 @@ class Simulador:
                 for planta in self.plantas:
                     if x == planta.x and y == planta.y:
                         celda = False
-                    elif abs(x - planta.x) <= 1 and abs(y - planta.y) <= 1:
+                    elif (abs(x - planta.x) + abs(y - planta.y) == 1):
                         celda = False
                         break
                 if celda:
@@ -148,9 +154,9 @@ class Simulador:
             planta.finalizar_dia(self.dia)
         self.dia += 1
         id = 0
-        print("###### DIA " + str(self.dia) + " ######")
-        for planta in self.plantas:
-            print("Data de Planta " + str(id) + ":")
-            planta.data.show_data()
-            print("")
-            id += 1
+        # print("###### DIA " + str(self.dia) + " ######")
+        # for planta in self.plantas:
+        #     print("Data de Planta " + str(id) + ":")
+        #     planta.data.show_data()
+        #     print("")
+        #     id += 1
