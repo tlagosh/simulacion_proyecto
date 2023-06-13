@@ -13,4 +13,9 @@ if __name__ == "__main__":
         with open(f"planta{planta_id}recorridos.json", "w") as file:
             json.dump(planta.data.recorridos, file, indent=4,
                       sort_keys=True, default=str)
+        with open(f"planta{planta_id}lluvia.json", "w") as file:
+            json.dump(planta.data.lluvia, file, indent=4,
+                      sort_keys=True, default=str)
+            
+        planta.data.show_data()
         planta_id += 1

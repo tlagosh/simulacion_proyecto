@@ -78,8 +78,7 @@ class Planta:
             self.data.recorridos[dia].append(camion.celda_inicio)
             self.data.costos[dia]["costo_transporte"] += self.costo_distancia_recorrida(
                 camion)
-        self.data.costos[dia]["costo_inventario"] += self.inventario * \
-            COSTO_INVENTARIO
+        self.data.costos[dia]["costo_inventario"] += int(self.inventario * COSTO_INVENTARIO)
 
     def costo_distancia_recorrida(self, camion):
         return camion.capacidad*COSTO_TRANSPORTE*(abs(self.x - camion.celda_inicio[0]) + abs(self.y - camion.celda_inicio[1]))

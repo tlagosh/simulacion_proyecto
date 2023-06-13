@@ -89,6 +89,9 @@ class Simulador:
         # politica de restock
         if not self.hay_lluvia():
             self.enviar_camiones()
+        else:
+            for planta in self.plantas:
+                planta.data.lluvia[self.dia] = True
 
         self.finalizar_dia()
 
@@ -105,6 +108,11 @@ class Simulador:
             # Se setea la demanda diaria
             planta.set_demanda_diaria()
             planta.camiones = []
+
+            # si hay demanda pendiente de dias anteriores, se suma a la demanda diaria
+            if planta.demanda_pendiente > 0:
+                planta.demanda_diaria += planta.demanda_pendiente
+                planta.demanda_pendiente = 0
             # Se resta la demanda del inventario
             planta.inventario -= planta.demanda_diaria
 

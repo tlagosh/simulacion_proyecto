@@ -8,6 +8,8 @@ class Data:
         self.dias_demanda_insastisfecha = 0
         self.recorridos = {}
         self.set_recorridos()
+        self.lluvia = {}
+        self.set_lluvia()
 
     def set_costos(self):
         for dia in range(0, params.DIAS_SIMULACION):
@@ -19,6 +21,10 @@ class Data:
     def set_recorridos(self):
         for dia in range(0, params.DIAS_SIMULACION):
             self.recorridos[dia] = []
+
+    def set_lluvia(self):
+        for dia in range(0, params.DIAS_SIMULACION):
+            self.lluvia[dia] = False
 
     def costo_total_transporte(self):
         return sum([value["costo_transporte"] for value in self.costos.values()])
@@ -42,4 +48,8 @@ class Data:
         print("Costo total: " + str(self.costo_total()))
         print("Dias con demanda insatisfecha: " +
               str(self.dias_demanda_insastisfecha))
+        
+        print("Costo Promedio de transporte: " + str(self.costo_total_transporte()/params.DIAS_SIMULACION))
+        print("Costo Promedio de inventario: " + str(self.costo_total_inventario()/params.DIAS_SIMULACION))
+        print("Costo Promedio de quiebre de stock: " + str(self.costo_total_quiebre_stock()/params.DIAS_SIMULACION))
         # print("Recorridos: {}".format(self.recorridos))
