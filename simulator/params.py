@@ -16,7 +16,7 @@ VELOCIDAD_CAMION = 40  # km/h
 # COSTOS
 COSTO_TRANSPORTE = 0.1  # $/tonelada/km
 COSTO_INVENTARIO = 0.5  # $/tonelada/dia
-COSTO_QUIEBRE_STOCK = 0.2  # $
+COSTO_QUIEBRE_STOCK = 30000  # $
 
 # PLANTAS
 PLANTAS = [(3, 2, "Normal", (4000, 200)),

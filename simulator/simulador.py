@@ -98,7 +98,7 @@ class Simulador:
 
             # Se setea la demanda diaria
             planta.set_demanda_diaria()
-
+            planta.camiones = []
             # Se resta la demanda del inventario
             planta.inventario -= planta.demanda_diaria
 
