@@ -24,16 +24,17 @@ class Celda:
     def enviar_camion(self):
         camion = self.camiones.pop()
         return camion
-    
+
     def madera_disponible(self):
-        
+
         cantidad_madera = 0
         for camion in self.camiones:
             cantidad_madera += camion.capacidad
-        
+
         return cantidad_madera
-    
+
     def enviar_camiones(self, planta):
         return self.camiones
 
-
+    def quedan_camiones(self):
+        return len(self.camiones) > 0
