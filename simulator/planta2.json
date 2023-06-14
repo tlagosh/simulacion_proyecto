@@ -1,138 +1,138 @@
 {
     "0": {
-        "costo_inventario": 2840,
+        "costo_inventario": 2818,
         "costo_quiebre_stock": 0,
-        "costo_transporte": 1539.0
+        "costo_transporte": 1605.0
     },
     "1": {
-        "costo_inventario": 2399,
+        "costo_inventario": 1545,
         "costo_quiebre_stock": 0,
-        "costo_transporte": 1794.0
+        "costo_transporte": 0
     },
     "2": {
-        "costo_inventario": 1711,
+        "costo_inventario": 1224,
         "costo_quiebre_stock": 0,
-        "costo_transporte": 1398.0
+        "costo_transporte": 1578.0
     },
     "3": {
-        "costo_inventario": 1242,
+        "costo_inventario": 1233,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1653.0
+        "costo_transporte": 1704.0
     },
     "4": {
-        "costo_inventario": 1314,
+        "costo_inventario": 1215,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1737.0
+        "costo_transporte": 1593.0
     },
     "5": {
-        "costo_inventario": 1359,
+        "costo_inventario": 0,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 0
+    },
+    "6": {
+        "costo_inventario": 1170,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 1536.0
+    },
+    "7": {
+        "costo_inventario": 1377,
         "costo_quiebre_stock": 1000,
         "costo_transporte": 1797.0
     },
-    "6": {
-        "costo_inventario": 1260,
+    "8": {
+        "costo_inventario": 1332,
         "costo_quiebre_stock": 1000,
         "costo_transporte": 1743.0
     },
-    "7": {
-        "costo_inventario": 1233,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 1611.0
-    },
-    "8": {
-        "costo_inventario": 0,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 0
-    },
     "9": {
-        "costo_inventario": 0,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 0
-    },
-    "10": {
         "costo_inventario": 1215,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1605.0
+        "costo_transporte": 1590.0
+    },
+    "10": {
+        "costo_inventario": 1188,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 1593.0
     },
     "11": {
-        "costo_inventario": 1260,
+        "costo_inventario": 1179,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1641.0
+        "costo_transporte": 1497.0
     },
     "12": {
-        "costo_inventario": 1161,
+        "costo_inventario": 0,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1557.0
+        "costo_transporte": 0
     },
     "13": {
-        "costo_inventario": 1233,
+        "costo_inventario": 1377,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1689.0
+        "costo_transporte": 1878.0
     },
     "14": {
+        "costo_inventario": 1170,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 1509.0
+    },
+    "15": {
+        "costo_inventario": 1296,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 1617.0
+    },
+    "16": {
+        "costo_inventario": 0,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 0
+    },
+    "17": {
+        "costo_inventario": 0,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 0
+    },
+    "18": {
         "costo_inventario": 1269,
         "costo_quiebre_stock": 1000,
         "costo_transporte": 1647.0
     },
-    "15": {
-        "costo_inventario": 0,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 0
-    },
-    "16": {
-        "costo_inventario": 1386,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 1902.0
-    },
-    "17": {
-        "costo_inventario": 1170,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 1515.0
-    },
-    "18": {
-        "costo_inventario": 1296,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 1695.0
-    },
     "19": {
-        "costo_inventario": 1206,
+        "costo_inventario": 1287,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1674.0
+        "costo_transporte": 1668.0
     },
     "20": {
-        "costo_inventario": 1260,
+        "costo_inventario": 1152,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1662.0
+        "costo_transporte": 1575.0
     },
     "21": {
-        "costo_inventario": 1323,
+        "costo_inventario": 1215,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1710.0
+        "costo_transporte": 1653.0
     },
     "22": {
-        "costo_inventario": 1242,
+        "costo_inventario": 1350,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1674.0
+        "costo_transporte": 1842.0
     },
     "23": {
-        "costo_inventario": 1368,
+        "costo_inventario": 1242,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1800.0
+        "costo_transporte": 1683.0
     },
     "24": {
         "costo_inventario": 1332,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1683.0
+        "costo_transporte": 1764.0
     },
     "25": {
-        "costo_inventario": 1314,
+        "costo_inventario": 1305,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1788.0
+        "costo_transporte": 1665.0
     },
     "26": {
-        "costo_inventario": 1251,
+        "costo_inventario": 0,
         "costo_quiebre_stock": 1000,
-        "costo_transporte": 1692.0
+        "costo_transporte": 0
     },
     "27": {
         "costo_inventario": 0,
@@ -140,13 +140,13 @@
         "costo_transporte": 0
     },
     "28": {
-        "costo_inventario": 1404,
-        "costo_quiebre_stock": 1000,
-        "costo_transporte": 1941.0
-    },
-    "29": {
         "costo_inventario": 0,
         "costo_quiebre_stock": 1000,
         "costo_transporte": 0
+    },
+    "29": {
+        "costo_inventario": 1242,
+        "costo_quiebre_stock": 1000,
+        "costo_transporte": 1662.0
     }
 }

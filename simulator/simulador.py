@@ -114,6 +114,8 @@ class Simulador:
 
     def iniciar_dia(self):
 
+        params.PROBABILIDAD_LLUVIA += params.PROBABILIDAD_LLUVIA_INCREMENTO
+
         for planta in self.plantas:
             # Se inicia por revisar si hay quiebre de stock
             if planta.quiebre_de_stock():
