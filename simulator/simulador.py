@@ -12,6 +12,20 @@ class Simulador:
         self.celdas = []
         self.plantas = []
 
+    def simular_n(self, numero_replicas):
+
+        plantas_por_simulación = {}
+
+        for i in tqdm(range(numero_replicas)):
+            self.dia = 0
+            self.celdas = []
+            self.plantas = []
+            random.seed(i)
+            plantas = self.simular()
+            plantas_por_simulación[i] = plantas
+        
+        return plantas_por_simulación
+
     def simular(self):
         self.generar_plantas()
         self.generar_celdas()
