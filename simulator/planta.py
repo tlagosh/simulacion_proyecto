@@ -1,5 +1,5 @@
 import numpy as np
-from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO
+from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO, INVENTARIO_OBJETIVO, INVENTARIO_ALARMA
 from data import Data
 
 
@@ -18,6 +18,7 @@ class Planta:
         self.demanda_diaria = 0
         # Si es mayor a 0 sumar uno a data.dias_demanda_insatisfecha
         self.demanda_pendiente = 0
+        self.demanda_total = 0
         self.camiones = []
         # Por política actual de reposición:
         self.celdas = []
@@ -34,6 +35,7 @@ class Planta:
     def set_demanda_diaria(self):
         self.demanda_diaria = np.random.choice(
             self.distribucion_demanda, size=1)
+        self.demanda_total += self.demanda_diaria
 
     def quiebre_de_stock(self):
         return self.inventario < self.demanda_diaria
@@ -63,10 +65,10 @@ class Planta:
 
         pedido = 0
         if self.demanda_pendiente > 0:
-            pedido = self.demanda_pendiente + 3 * self.distribucion_demanda.mean()
+            pedido = self.demanda_pendiente + INVENTARIO_OBJETIVO * self.distribucion_demanda.mean()
         else:
-            if self.inventario < 3 * self.distribucion_demanda.mean():
-                pedido = 3 * self.distribucion_demanda.mean() - self.inventario
+            if self.inventario < INVENTARIO_ALARMA * self.distribucion_demanda.mean():
+                pedido = INVENTARIO_OBJETIVO * self.distribucion_demanda.mean() - self.inventario
 
         return pedido
 
