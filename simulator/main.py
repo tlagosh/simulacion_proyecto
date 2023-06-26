@@ -105,6 +105,7 @@ def print_grafico_por_replica(simulaciones):
         #primero graficamos los títulos de la tabla
         # print("Replica         |Costo Transporte |Costo Inventario |Costo Quiebre Stock |a    |b")
         print("Replica         |Costo Transporte |Costo Inventario |Costo Quiebre Stock |Costo Total |Porcentaje de Satisfaccion de Demanda")
+        f.write("Replica,Costo Transporte,Costo Inventario,Costo Quiebre Stock,Costo Total,Porcentaje de Satisfaccion de Demanda\n")
 
         CT = 0
         CI = 0
