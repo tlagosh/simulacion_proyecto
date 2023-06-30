@@ -11,9 +11,13 @@ class Celda:
         self.produccion = CELDA_PRODUCCION
         self.camiones = []
         self.iniciar_camiones()
+        self.madera_disponible = int(self.produccion/365)
 
     def __str__(self):
         return f"Celda: ({self.x}, {self.y})"
+    
+    def iniciar_madera(self):
+        self.madera_disponible = int(self.produccion/365)
 
     def iniciar_camiones(self):
         self.camiones = []
@@ -23,18 +27,46 @@ class Celda:
 
     def enviar_camion(self):
         camion = self.camiones.pop()
-        return camion
+        if self.madera_disponible >= camion.capacidad:
+            self.madera_disponible -= camion.capacidad
+            return camion
+        else:
+            return None
+    
+    def enviar_n_camiones(self, n):
+        camiones = []
+        for i in range(n):
+            camiones.append(self.camiones.pop())
 
-    def madera_disponible(self):
+        camiones_que_se_pueden_enviar = []
+        for camion in camiones:
+            if self.madera_disponible >= camion.capacidad:
+                self.madera_disponible -= camion.capacidad
+                camiones_que_se_pueden_enviar.append(camion)
+        
+        return camiones_que_se_pueden_enviar
+
+    def madera_disponible_para_transportar(self):
 
         cantidad_madera = 0
         for camion in self.camiones:
             cantidad_madera += camion.capacidad
 
-        return cantidad_madera
+        return min(cantidad_madera, self.madera_disponible)
 
     def enviar_camiones(self, planta):
-        return self.camiones
+        camiones = []
+        while self.madera_disponible > 0 and len(self.camiones) > 0:
+            camion = self.enviar_camion()
+            if camion != None:
+                camiones.append(camion)
+            else:
+                break
+
+        return camiones
 
     def quedan_camiones(self):
         return len(self.camiones) > 0
+    
+    def camiones_disponibles(self):
+        return len(self.camiones)

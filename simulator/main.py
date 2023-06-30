@@ -1,6 +1,6 @@
 from simulador import Simulador
 import json
-from params import REPLICAS
+from params import REPLICAS, POLITICA_REPOSICION
 
 
 def print_medidas_desempeño(plantas):
@@ -131,7 +131,10 @@ def print_grafico_por_replica(simulaciones):
                 demanda_total += float(planta.demanda_total)
 
             a = costo_total_transporte/costo_total_inventario
-            b = costo_total_transporte/costo_total_quiebre
+            if costo_total_quiebre == 0:
+                b = 0
+            else:
+                b = costo_total_transporte/costo_total_quiebre
 
             # print(f"Replica {count}\t|{round(costo_total_transporte, 2)} \t  |{round(costo_total_inventario, 2)}\t    |{round(costo_total_quiebre, 2)} de {365*3}\t |{round(a, 2)} |{round(b, 2)}")
             print(f"Replica {count}\t|{round(costo_total_transporte, 2)} \t  |{round(costo_total_inventario, 2)}\t    |{round(costo_total_quiebre, 2)}\t |{round(costo_total_transporte + costo_total_inventario + costo_total_quiebre, 2)} |{round(((demanda_total - demanda_insatisfecha)/demanda_total)*100, 2)}%")
@@ -161,7 +164,7 @@ def print_grafico_por_replica(simulaciones):
 if __name__ == "__main__":
 
     simulador = Simulador()
-    simulaciones = simulador.simular_n(REPLICAS)
+    simulaciones = simulador.simular_n(REPLICAS, POLITICA_REPOSICION)
     planta_id = 0
 
     # almacenamos los datos de cada planta de la última simulación para ser analizados

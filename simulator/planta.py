@@ -1,5 +1,5 @@
 import numpy as np
-from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO, INVENTARIO_OBJETIVO, INVENTARIO_ALARMA
+from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO, INVENTARIO_OBJETIVO, INVENTARIO_ALARMA, IMPORTANCIA_DEMANDA, IMPORTANCIA_INVENTARIO, IMPORTANCIA_DISTANCIA
 from data import Data
 
 
@@ -23,14 +23,19 @@ class Planta:
         # Por política actual de reposición:
         self.celdas = []
         self.data = Data()
+        self.mean_demanda = 0
 
     def set_distribucion_normal(self):
         self.distribucion_demanda = np.random.normal(
             self.primer_parametro_distribucion, self.segundo_parametro_distribucion, 1000000)
+        
+        self.mean_demanda = float(self.distribucion_demanda.mean())
 
     def set_distribucion_triangular(self):
         self.distribucion_demanda = np.random.triangular(
             self.primer_parametro_distribucion, self.segundo_parametro_distribucion, self.tercer_parametro_distribucion, 1000000)
+        
+        self.mean_demanda = float(self.distribucion_demanda.mean())
 
     def set_demanda_diaria(self):
         self.demanda_diaria = np.random.choice(
@@ -65,12 +70,25 @@ class Planta:
 
         pedido = 0
         if self.demanda_pendiente > 0:
-            pedido = self.demanda_pendiente + INVENTARIO_OBJETIVO * self.distribucion_demanda.mean()
+            pedido = self.demanda_pendiente + INVENTARIO_OBJETIVO * self.mean_demanda
         else:
-            if self.inventario < INVENTARIO_ALARMA * self.distribucion_demanda.mean():
-                pedido = INVENTARIO_OBJETIVO * self.distribucion_demanda.mean() - self.inventario
+            if self.inventario < INVENTARIO_ALARMA * self.mean_demanda:
+                pedido = INVENTARIO_OBJETIVO * self.mean_demanda - self.inventario
 
         return pedido
+    
+    def get_factor(self, celda):
+        # Factor de pedido que considera la demanda, inventario y lejanía con la celda
+        # Se usa para decidir a qué celda enviar un camión
+
+        factor = self.demanda_diaria * IMPORTANCIA_DEMANDA
+
+        if self.inventario > INVENTARIO_OBJETIVO * self.mean_demanda:
+            factor = factor / (IMPORTANCIA_INVENTARIO * self.inventario)
+
+        factor = factor / (IMPORTANCIA_DISTANCIA * (abs(self.x - celda.x) + abs(self.y - celda.y)))
+
+        return float(factor)
 
     def satisfacer_demanda(self):
         self.inventario - self.demanda_diaria

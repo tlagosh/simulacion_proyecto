@@ -2,6 +2,7 @@ from camion import Camion
 from celda import Celda
 from planta import Planta
 import params
+from params import INVENTARIO_OBJETIVO
 import random
 from tqdm import tqdm
 
@@ -11,10 +12,12 @@ class Simulador:
         self.dia = 0
         self.celdas = []
         self.plantas = []
+        self.politica = ""
 
-    def simular_n(self, numero_replicas):
+    def simular_n(self, numero_replicas, politica):
 
         plantas_por_simulación = {}
+        self.politica = politica
 
         for i in tqdm(range(numero_replicas)):
             self.dia = 0
@@ -32,7 +35,8 @@ class Simulador:
 
         # Dado la política de restock actual, tenemos que asignar las celdas a plantas
         # Lo anterior se hace con la siguiente función
-        self.asignar_celdas_a_plantas()
+        if self.politica == "E":
+            self.asignar_celdas_a_plantas()
         
         progress_bar = tqdm(total=params.DIAS_SIMULACION)
 
@@ -140,26 +144,63 @@ class Simulador:
 
         for celda in self.celdas:
             celda.iniciar_camiones()
+            celda.iniciar_madera()
 
     def enviar_camiones(self):
 
-        for planta in self.plantas:
+        if self.politica == "E":
+            for planta in self.plantas:
 
-            pedido = planta.hacer_pedido()
+                pedido = planta.hacer_pedido()
 
-            if pedido > 0:
-                for coordenadas_celda in planta.celdas:
+                if pedido > 0:
+                    for coordenadas_celda in planta.celdas:
 
-                    # Enviar camiones de esa celda a la planta
-                    if pedido > 0:
-                        celda = self.get_celda(coordenadas_celda)
+                        # Enviar camiones de esa celda a la planta
+                        if pedido > 0:
+                            celda = self.get_celda(coordenadas_celda)
+                            if celda.quedan_camiones() and celda.camiones[0].puedo_llegar(planta):
+                                pedido -= celda.madera_disponible_para_transportar()
+                                camiones = celda.enviar_camiones(planta)
+                                planta.recibir_camiones(camiones)
+
+                        else:
+                            break
+
+        elif self.politica == "D":
+
+            r = list(range(len(self.celdas)))
+            random.shuffle(r)
+            for i in r:
+                celda = self.celdas[i]
+                factores_plantas = []
+
+                for planta in self.plantas:
+                    factor = planta.get_factor(celda)
+                    factores_plantas.append((planta, factor))
+
+                # print([x[1] for x in factores_plantas])
+
+                suma_factores = sum([x[1] for x in factores_plantas])
+
+                # print([x[1] for x in factores_plantas], suma_factores, celda.camiones_disponibles())
+                camiones_plantas = [(x[0], int(x[1] * ((celda.camiones_disponibles() / suma_factores) if suma_factores > 0 else 0))) for x in factores_plantas]
+
+                # if sum([x[1] for x in camiones_plantas]) < celda.camiones_disponibles():
+                #     camiones_plantas[0] = (camiones_plantas[0][0], camiones_plantas[0][1] + (celda.camiones_disponibles() - sum([x[1] for x in camiones_plantas])))
+
+                # print(camiones_plantas)
+
+                for planta, camiones in camiones_plantas:
+                    if int(camiones) > 0:
+                        camiones = int(camiones)
                         if celda.quedan_camiones() and celda.camiones[0].puedo_llegar(planta):
-                            pedido -= celda.madera_disponible()
-                            camiones = celda.enviar_camiones(planta)
+                            camiones = celda.enviar_n_camiones(camiones)
                             planta.recibir_camiones(camiones)
-
                     else:
                         break
+
+                        
 
     def get_celda(self, coordenadas_celda):
         for celda in self.celdas:
