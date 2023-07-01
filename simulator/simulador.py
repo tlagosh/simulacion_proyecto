@@ -40,7 +40,7 @@ class Simulador:
         
         progress_bar = tqdm(total=params.DIAS_SIMULACION)
 
-        while self.dia < params.DIAS_SIMULACION:
+        while self.dia < params.DIAS_SIMULACION + params.DIAS_TRANSIENTE:
             self.main_loop()
             progress_bar.update(1)
         
@@ -109,7 +109,8 @@ class Simulador:
             self.enviar_camiones()
         else:
             for planta in self.plantas:
-                planta.data.lluvia[self.dia] = True
+                if self.dia >= params.DIAS_TRANSIENTE:
+                    planta.data.lluvia[self.dia - params.DIAS_TRANSIENTE] = True
 
         self.finalizar_dia()
 
@@ -123,7 +124,8 @@ class Simulador:
         for planta in self.plantas:
             # Se inicia por revisar si hay quiebre de stock
             if planta.quiebre_de_stock():
-                planta.data.costos[self.dia]["costo_quiebre_stock"] += params.COSTO_QUIEBRE_STOCK
+                if self.dia >= params.DIAS_TRANSIENTE:
+                    planta.data.costos[self.dia - params.DIAS_TRANSIENTE]["costo_quiebre_stock"] += params.COSTO_QUIEBRE_STOCK
 
             # Se setea la demanda diaria
             planta.set_demanda_diaria()
@@ -140,7 +142,8 @@ class Simulador:
             if planta.inventario < 0:
                 planta.demanda_pendiente = abs(planta.inventario)
                 planta.inventario = 0
-                planta.data.dias_demanda_insastisfecha += 1
+                if self.dia >= params.DIAS_TRANSIENTE:
+                    planta.data.dias_demanda_insastisfecha += 1
 
         for celda in self.celdas:
             celda.iniciar_camiones()

@@ -1,5 +1,6 @@
 import numpy as np
-from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO, INVENTARIO_OBJETIVO, INVENTARIO_ALARMA, IMPORTANCIA_DEMANDA, IMPORTANCIA_INVENTARIO, IMPORTANCIA_DISTANCIA
+from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO,\
+INVENTARIO_OBJETIVO, INVENTARIO_ALARMA, IMPORTANCIA_DEMANDA, IMPORTANCIA_INVENTARIO, IMPORTANCIA_DISTANCIA, DIAS_TRANSIENTE
 from data import Data
 
 
@@ -94,11 +95,12 @@ class Planta:
         self.inventario - self.demanda_diaria
 
     def finalizar_dia(self, dia):
-        for camion in self.camiones:
-            self.data.recorridos[dia].append(camion.celda_inicio)
-            self.data.costos[dia]["costo_transporte"] += self.costo_distancia_recorrida(
-                camion)
-        self.data.costos[dia]["costo_inventario"] += int(self.inventario * COSTO_INVENTARIO)
+        if dia >= DIAS_TRANSIENTE:
+            for camion in self.camiones:
+                self.data.recorridos[dia - DIAS_TRANSIENTE].append(camion.celda_inicio)
+                self.data.costos[dia - DIAS_TRANSIENTE]["costo_transporte"] += self.costo_distancia_recorrida(
+                    camion)
+            self.data.costos[dia - DIAS_TRANSIENTE]["costo_inventario"] += int(self.inventario * COSTO_INVENTARIO)
 
     def costo_distancia_recorrida(self, camion):
         return camion.capacidad*COSTO_TRANSPORTE*(abs(self.x - camion.celda_inicio[0]) + abs(self.y - camion.celda_inicio[1]))
