@@ -196,6 +196,44 @@ def mean_day_inventory_per_plant(simulaciones):
             print(f"Replica {count}\t|{round(inventario_promedio_planta_1, 2)} \t  |{round(inventario_promedio_planta_2, 2)}\t    |{round(inventario_promedio_planta_3, 2)}")
             f.write(f"{count},{round(inventario_promedio_planta_1, 2)},{round(inventario_promedio_planta_2, 2)},{round(inventario_promedio_planta_3, 2)}\n")
             count += 1
+
+def mean_day_inventory_per_plant_after_rain(simulaciones):
+
+    # we open a csv file to write the data
+    with open('mean_day_inventory_per_plant_after_rain.csv', 'w') as f:
+
+        # graficamos la suma de costos de transporte, inventario y quiebre de stock de todo el año
+
+        #primero graficamos los títulos de la tabla
+        print("Media de inventario por planta en días de lluvia")
+        print("Replica         |Planta 1         |Planta 2         |Planta 3")
+        f.write("Replica,Planta 1,Planta 2,Planta 3\n")
+
+        # luego graficamos los datos de cada replica
+        count = 1
+        for replica in simulaciones.values():
+            inventario_promedio_planta_1 = 0
+            inventario_promedio_planta_2 = 0
+            inventario_promedio_planta_3 = 0
+            planta_id = 1
+            for planta in replica:
+                for dia in planta.data.costos:
+                    if planta.data.lluvia[dia] == True:
+                        if planta_id == 1:
+                            inventario_promedio_planta_1 += planta.data.costos[dia]["costo_inventario"]/COSTO_INVENTARIO
+                        elif planta_id == 2:
+                            inventario_promedio_planta_2 += planta.data.costos[dia]["costo_inventario"]/COSTO_INVENTARIO
+                        elif planta_id == 3:
+                            inventario_promedio_planta_3 += planta.data.costos[dia]["costo_inventario"]/COSTO_INVENTARIO
+                planta_id += 1
+
+            inventario_promedio_planta_1 /= len(replica[0].data.costos)
+            inventario_promedio_planta_2 /= len(replica[0].data.costos)
+            inventario_promedio_planta_3 /= len(replica[0].data.costos)
+
+            print(f"Replica {count}\t|{round(inventario_promedio_planta_1, 2)} \t  |{round(inventario_promedio_planta_2, 2)}\t    |{round(inventario_promedio_planta_3, 2)}")
+            f.write(f"{count},{round(inventario_promedio_planta_1, 2)},{round(inventario_promedio_planta_2, 2)},{round(inventario_promedio_planta_3, 2)}\n")
+            count += 1
               
 if __name__ == "__main__":
 
@@ -225,6 +263,7 @@ if __name__ == "__main__":
     # calculamos las medidas de desempeño promedio de todas las simulaciones
     # print_medidas_promedio(simulaciones)
 
-    print_grafico_por_replica(simulaciones)
+    # print_grafico_por_replica(simulaciones)
     # mean_day_inventory_per_plant(simulaciones)
+    # mean_day_inventory_per_plant_after_rain(simulaciones)
 
