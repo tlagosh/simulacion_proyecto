@@ -263,7 +263,7 @@ if __name__ == "__main__":
     # calculamos las medidas de desempeño promedio de todas las simulaciones
     # print_medidas_promedio(simulaciones)
 
-    # print_grafico_por_replica(simulaciones)
+    print_grafico_por_replica(simulaciones)
     # mean_day_inventory_per_plant(simulaciones)
     # mean_day_inventory_per_plant_after_rain(simulaciones)
 

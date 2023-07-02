@@ -13,6 +13,7 @@ class Simulador:
         self.celdas = []
         self.plantas = []
         self.politica = ""
+        self.camiones_sobrantes_simulación = 0
 
     def simular_n(self, numero_replicas, politica):
 
@@ -23,15 +24,16 @@ class Simulador:
             self.dia = 0
             self.celdas = []
             self.plantas = []
-            random.seed(i)
             plantas = self.simular()
             plantas_por_simulación[i] = plantas
+            print(f"Camiones sobrantes: {self.camiones_sobrantes_simulación}")
         
         return plantas_por_simulación
 
     def simular(self):
         self.generar_plantas()
         self.generar_celdas()
+        self.camiones_sobrantes_simulación = 0
 
         # Dado la política de restock actual, tenemos que asignar las celdas a plantas
         # Lo anterior se hace con la siguiente función
@@ -49,6 +51,7 @@ class Simulador:
         return self.plantas
 
     def generar_plantas(self):
+        id_planta = 0
         for planta in params.PLANTAS:
             if planta[2] == "Normal":
                 planta__nueva = Planta(
@@ -59,10 +62,11 @@ class Simulador:
                     planta[0], planta[1], planta[2], planta[3][0], planta[3][1], planta[3][2])
                 planta__nueva.set_distribucion_triangular()
             planta__nueva.set_inventario_inicial()
-            planta__nueva.set_quiebre_de_stock_inicial()
             self.plantas.append(planta__nueva)
+            id_planta += 1
 
     def generar_celdas(self):
+        id_celda = 0
         for x in range(params.X_MAX_MAPA):
             for y in range(params.Y_MAX_MAPA):
                 celda = True
@@ -74,6 +78,7 @@ class Simulador:
                         break
                 if celda:
                     self.celdas.append(Celda(x, y))
+                    id_celda += 1
 
     def asignar_celdas_a_plantas(self):
         # Cada planta, por turnos, va a elegir la celda más cercana a ella
@@ -151,6 +156,7 @@ class Simulador:
 
     def enviar_camiones(self):
 
+        ## Politica de restock ESTÁTICA ##
         if self.politica == "E":
             for planta in self.plantas:
 
@@ -169,13 +175,16 @@ class Simulador:
 
                         else:
                             break
+        
+            for celda in self.celdas:
+                if celda.camiones_disponibles() > 0:
+                    self.camiones_sobrantes_simulación += celda.camiones_disponibles()
 
+        ## Politica de restock DINAMICA ##
         elif self.politica == "D":
 
-            r = list(range(len(self.celdas)))
-            random.shuffle(r)
-            for i in r:
-                celda = self.celdas[i]
+            camiones_por_celda = []
+            for celda in self.celdas:
                 factores_plantas = []
 
                 for planta in self.plantas:
@@ -189,21 +198,56 @@ class Simulador:
                 # print([x[1] for x in factores_plantas], suma_factores, celda.camiones_disponibles())
                 camiones_plantas = [(x[0], int(x[1] * ((celda.camiones_disponibles() / suma_factores) if suma_factores > 0 else 0))) for x in factores_plantas]
 
-                # if sum([x[1] for x in camiones_plantas]) < celda.camiones_disponibles():
-                #     camiones_plantas[0] = (camiones_plantas[0][0], camiones_plantas[0][1] + (celda.camiones_disponibles() - sum([x[1] for x in camiones_plantas])))
+                if sum([x[1] for x in camiones_plantas]) < celda.camiones_disponibles():
+                    # Le pasamos los camiones restantes a la planta con mayor factor
+                    camiones_plantas = sorted(camiones_plantas, key=lambda x: x[1], reverse=True)
+                    camiones_plantas[0] = (camiones_plantas[0][0], camiones_plantas[0][1] + (celda.camiones_disponibles() - sum([x[1] for x in camiones_plantas])))
 
                 # print(camiones_plantas)
 
-                for planta, camiones in camiones_plantas:
-                    if int(camiones) > 0:
-                        camiones = int(camiones)
-                        if celda.quedan_camiones() and celda.camiones[0].puedo_llegar(planta):
-                            camiones = celda.enviar_n_camiones(camiones)
-                            planta.recibir_camiones(camiones)
-                    else:
-                        break
+                camiones_por_celda.append((celda, camiones_plantas))
 
-                        
+            pedidos = []
+            for planta in self.plantas:
+                pedido = planta.hacer_pedido()
+                pedidos.append((planta, pedido))
+
+            # # print(pedidos)
+            
+            pedidos = sorted(pedidos, key=lambda x: x[1], reverse=True)
+
+            for planta, pedido in pedidos:
+                camiones_por_celda = sorted(camiones_por_celda, key=lambda x: self.get_distance(planta, x[0]), reverse=True)
+                camiones_sobrantes = 0
+                for celda, camiones_plantas in camiones_por_celda:
+                    if pedido > 0:
+                        for planta2, camiones in camiones_plantas:
+                            if planta == planta2:
+                                if camiones > 0:
+                                    if celda.quedan_camiones() and celda.camiones[0].puedo_llegar(planta):
+                                        camiones = celda.enviar_n_camiones(camiones)
+                                        planta.recibir_camiones(camiones)
+                                        pedido -= len(camiones) * params.CAPACIDAD_CAMION
+                                else:
+                                    break
+                    else:
+                        for planta2, camiones in camiones_plantas:
+                            if planta == planta2:
+                                camiones_sobrantes += camiones
+
+                        # planta_que_recibe = 0
+                        # for planta2, camiones in camiones_plantas:
+                        #     if planta != planta2:
+                        #         if planta_que_recibe == 0:
+                        #             camiones += int(camiones_sobrantes/2)
+                        #             camiones_sobrantes -= int(camiones_sobrantes/2)
+                        #             planta_que_recibe += 1
+                        #         else:
+                        #             camiones += int(camiones_sobrantes)
+            
+            for celda in self.celdas:
+                if celda.camiones_disponibles() > 0:
+                    self.camiones_sobrantes_simulación += celda.camiones_disponibles()
 
     def get_celda(self, coordenadas_celda):
         for celda in self.celdas:

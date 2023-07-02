@@ -60,10 +60,7 @@ class Planta:
         self.inventario += sum([camion.capacidad for camion in camiones])
 
     def set_inventario_inicial(self):
-        self.inventario = 2 * self.distribucion_demanda.mean()
-
-    def set_quiebre_de_stock_inicial(self):
-        self.inventario = 2 * self.distribucion_demanda.mean()
+        self.inventario = 2 * self.mean_demanda
 
     def hacer_pedido(self):
         # Todos los dias se pide lo que falta para llegar a 3*promedio_demanda_diaria
@@ -82,12 +79,12 @@ class Planta:
         # Factor de pedido que considera la demanda, inventario y lejanía con la celda
         # Se usa para decidir a qué celda enviar un camión
 
-        factor = self.demanda_diaria * IMPORTANCIA_DEMANDA
+        factor = IMPORTANCIA_DEMANDA * self.demanda_diaria
 
         if self.inventario > INVENTARIO_OBJETIVO * self.mean_demanda:
-            factor = factor / (IMPORTANCIA_INVENTARIO * self.inventario)
+            factor += IMPORTANCIA_INVENTARIO/self.inventario
 
-        factor = factor / (IMPORTANCIA_DISTANCIA * (abs(self.x - celda.x) + abs(self.y - celda.y)))
+        factor += 10**IMPORTANCIA_DISTANCIA/(10**(abs(self.x - celda.x) + abs(self.y - celda.y)))
 
         return float(factor)
 
