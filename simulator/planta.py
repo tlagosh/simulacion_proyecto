@@ -1,6 +1,6 @@
 import numpy as np
 from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO,\
-INVENTARIO_OBJETIVO, INVENTARIO_ALARMA, IMPORTANCIA_DEMANDA, IMPORTANCIA_INVENTARIO, IMPORTANCIA_DISTANCIA, DIAS_TRANSIENTE
+INVENTARIO_OBJETIVO, INVENTARIO_ALARMA, IMPORTANCIA_DEMANDA, IMPORTANCIA_DISTANCIA, DIAS_TRANSIENTE
 from data import Data
 
 
@@ -79,12 +79,9 @@ class Planta:
         # Factor de pedido que considera la demanda, inventario y lejanía con la celda
         # Se usa para decidir a qué celda enviar un camión
 
-        factor = IMPORTANCIA_DEMANDA * self.demanda_diaria
+        factor = (10**IMPORTANCIA_DEMANDA) * (self.hacer_pedido() if self.hacer_pedido() > 0 else 1)
 
-        if self.inventario > INVENTARIO_OBJETIVO * self.mean_demanda:
-            factor += IMPORTANCIA_INVENTARIO/self.inventario
-
-        factor += 10**IMPORTANCIA_DISTANCIA/(10**(abs(self.x - celda.x) + abs(self.y - celda.y)))
+        factor += 10**IMPORTANCIA_DISTANCIA/(2**(abs(self.x - celda.x) + abs(self.y - celda.y)))
 
         return float(factor)
 
