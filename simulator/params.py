@@ -12,7 +12,7 @@ Y_MAX_MAPA = 10
 
 # CAMIONES
 CAMIONES_MIN = 3
-CAMIONES_MAX = 15
+CAMIONES_MAX = 7
 CAPACIDAD_CAMION = 30  # toneladas
 VELOCIDAD_CAMION = 40  # km/h
 
@@ -33,7 +33,7 @@ CELDA_PRODUCCION = 100000 # toneladas
 POLITICA_REPOSICION = "E"  # "E: E" o "D: Dinamica"
 
 # POLITICA DE REPOSICION ESTATICA
-INVENTARIO_OBJETIVO = 4 # veces la demanda promedio diaria
+INVENTARIO_OBJETIVO = 3 # veces la demanda promedio diaria
 INVENTARIO_ALARMA = 3 # veces la demanda promedio diaria
 
 # FACTORES POLITICA DE REPOSICION DINAMICA
