@@ -1,6 +1,6 @@
 import numpy as np
 from params import HORA_INICIAL, HORA_TERMINO, COSTO_TRANSPORTE, COSTO_INVENTARIO,\
-INVENTARIO_OBJETIVO, INVENTARIO_ALARMA, IMPORTANCIA_DEMANDA, IMPORTANCIA_DISTANCIA, DIAS_TRANSIENTE
+IMPORTANCIA_DEMANDA, IMPORTANCIA_DISTANCIA, DIAS_TRANSIENTE
 from data import Data
 
 
@@ -25,12 +25,20 @@ class Planta:
         self.celdas = []
         self.data = Data()
         self.mean_demanda = 0
+        self.inventario_objetivo = 0
+        self.inventario_alarma = 0
 
     def set_distribucion_normal(self):
         self.distribucion_demanda = np.random.normal(
             self.primer_parametro_distribucion, self.segundo_parametro_distribucion, 1000000)
         
         self.mean_demanda = float(self.distribucion_demanda.mean())
+    
+    def set_inventario_objetivo(self, io):
+        self.inventario_objetivo = io
+
+    def set_inventario_alarma(self, ia):
+        self.inventario_alarma = ia
 
     def set_distribucion_triangular(self):
         self.distribucion_demanda = np.random.triangular(
@@ -68,10 +76,10 @@ class Planta:
 
         pedido = 0
         if self.demanda_pendiente > 0:
-            pedido = self.demanda_pendiente + INVENTARIO_OBJETIVO * self.mean_demanda
+            pedido = self.demanda_pendiente + self.inventario_objetivo * self.mean_demanda
         else:
-            if self.inventario < INVENTARIO_ALARMA * self.mean_demanda:
-                pedido = INVENTARIO_OBJETIVO * self.mean_demanda - self.inventario
+            if self.inventario < self.inventario_alarma * self.mean_demanda:
+                pedido = self.inventario_objetivo * self.mean_demanda - self.inventario
 
         return pedido
     
@@ -79,7 +87,7 @@ class Planta:
         # Factor de pedido que considera la demanda, inventario y lejanía con la celda
         # Se usa para decidir a qué celda enviar un camión
 
-        factor = (10**IMPORTANCIA_DEMANDA) * (self.hacer_pedido() if self.hacer_pedido() > 0 else 1)
+        factor = (10**IMPORTANCIA_DEMANDA) * self.hacer_pedido()
 
         factor += 10**IMPORTANCIA_DISTANCIA/(2**(abs(self.x - celda.x) + abs(self.y - celda.y)))
 

@@ -2,7 +2,7 @@ from camion import Camion
 from celda import Celda
 from planta import Planta
 import params
-from params import INVENTARIO_OBJETIVO
+from params import INVENTARIO_OBJETIVO, INVENTARIO_ALARMA
 import random
 from tqdm import tqdm
 
@@ -14,11 +14,16 @@ class Simulador:
         self.plantas = []
         self.politica = ""
         self.camiones_sobrantes_simulación = 0
+        self.inventario_objetivo = 0
+        self.inventario_alarma = 0
 
-    def simular_n(self, numero_replicas, politica):
+    def simular_n(self, numero_replicas, politica, inventario_objetivo=INVENTARIO_OBJETIVO, inventario_alarma=INVENTARIO_ALARMA):
 
         plantas_por_simulación = {}
         self.politica = politica
+
+        self.inventario_objetivo = inventario_objetivo
+        self.inventario_alarma = inventario_alarma
 
         for i in tqdm(range(numero_replicas)):
             self.dia = 0
@@ -62,6 +67,8 @@ class Simulador:
                     planta[0], planta[1], planta[2], planta[3][0], planta[3][1], planta[3][2])
                 planta__nueva.set_distribucion_triangular()
             planta__nueva.set_inventario_inicial()
+            planta__nueva.set_inventario_objetivo(self.inventario_objetivo)
+            planta__nueva.set_inventario_alarma(self.inventario_alarma)
             self.plantas.append(planta__nueva)
             id_planta += 1
 

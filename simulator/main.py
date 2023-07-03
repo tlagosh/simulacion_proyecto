@@ -1,6 +1,7 @@
 from simulador import Simulador
 import json
 from params import REPLICAS, POLITICA_REPOSICION, COSTO_INVENTARIO
+import params
 
 
 def print_medidas_desempeño(plantas):
@@ -234,6 +235,65 @@ def mean_day_inventory_per_plant_after_rain(simulaciones):
             print(f"Replica {count}\t|{round(inventario_promedio_planta_1, 2)} \t  |{round(inventario_promedio_planta_2, 2)}\t    |{round(inventario_promedio_planta_3, 2)}")
             f.write(f"{count},{round(inventario_promedio_planta_1, 2)},{round(inventario_promedio_planta_2, 2)},{round(inventario_promedio_planta_3, 2)}\n")
             count += 1
+
+def compare_inventory_params():
+
+    inventarios_objetivo = [0, 1, 2, 3, 4]
+
+    inventarios_alarma = [0, 1, 2, 3, 4]
+
+    # we open a csv file to write the data
+    with open('compare_inventory_params.csv', 'w') as f:
+
+        f.write("Inventario Objetivo,Inventario Alarma,Costo Transporte,Costo Inventario,Costo Quiebre de Stock,Costo Total,Porcentaje de Satisfacción de Demanda\n")
+
+        for io in inventarios_objetivo:
+            for ia in inventarios_alarma:
+
+                if io >= ia:
+
+                    params.INVENTARIO_OBJETIVO = io
+                    params.INVENTARIO_ALARMA = ia
+
+                    simulador = Simulador()
+                    simulaciones = simulador.simular_n(REPLICAS, POLITICA_REPOSICION, inventario_objetivo=io, inventario_alarma=ia)
+
+                    CT = 0
+                    CI = 0
+                    CQ = 0
+                    DEMANDA_INSATISFECHA = 0
+                    DEMANDA_TOTAL = 0
+
+                    count = 1
+                    for replica in simulaciones.values():
+                        costo_total_transporte = 0
+                        costo_total_inventario = 0
+                        costo_total_quiebre = 0
+                        demanda_insatisfecha = 0
+                        demanda_total = 0
+                        for planta in replica:
+                            for dia in planta.data.costos:
+                                costo_total_transporte += planta.data.costos[dia]["costo_transporte"]
+                                costo_total_inventario += planta.data.costos[dia]["costo_inventario"]
+                                costo_total_quiebre += planta.data.costos[dia]["costo_quiebre_stock"]
+                            demanda_insatisfecha += float(planta.demanda_pendiente)
+                            demanda_total += float(planta.demanda_total)
+
+                        count += 1
+
+                        CT += costo_total_transporte
+                        CI += costo_total_inventario
+                        CQ += costo_total_quiebre
+                        DEMANDA_INSATISFECHA += demanda_insatisfecha
+                        DEMANDA_TOTAL += demanda_total
+
+                    CT /= len(simulaciones)
+                    CI /= len(simulaciones)
+                    CQ /= len(simulaciones)
+                    DEMANDA_INSATISFECHA /= len(simulaciones)
+                    DEMANDA_TOTAL /= len(simulaciones)
+
+                    f.write(f"{io},{ia},{round(CT, 2)},{round(CI, 2)},{round(CQ, 2)},{round(CT + CI + CQ, 2)},{round(((DEMANDA_TOTAL - DEMANDA_INSATISFECHA)/DEMANDA_TOTAL)*100, 2)}\%\n")
               
 if __name__ == "__main__":
 
@@ -266,4 +326,6 @@ if __name__ == "__main__":
     print_grafico_por_replica(simulaciones)
     # mean_day_inventory_per_plant(simulaciones)
     # mean_day_inventory_per_plant_after_rain(simulaciones)
+
+    # compare_inventory_params()
 
